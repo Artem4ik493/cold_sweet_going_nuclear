@@ -34,13 +34,13 @@ public final class ReactorHandler {
                 continue;
             }
 
-            if (!isOperationalReactor(level, reactor)) {
-                continue;
-            }
-
             double distanceSquared = player.distanceToSqr(
                 reactor.getX() + 0.5, reactor.getY() + 0.5, reactor.getZ() + 0.5);
             if (distanceSquared > radiusSquared) {
+                continue;
+            }
+
+            if (!isOperationalReactor(level, reactor)) {
                 continue;
             }
 
