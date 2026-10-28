@@ -30,6 +30,8 @@ public final class SteamFluidHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger("CSGN/SteamFluidHelper");
     private static final Map<ResourceLocation, Map<BlockPos, CachedCheck>> CACHE = new ConcurrentHashMap<>();
     private static final Set<String> LOGGED_STEAM_LINES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> LOGGED_FLUID_TYPES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> LOGGED_NO_HANDLER = ConcurrentHashMap.newKeySet();
 
     private record CachedCheck(long tick, boolean containsSteam) {}
     private record SteamSource(BlockPos pos, Direction side, IFluidHandler handler, FluidStack stack) {}
@@ -72,6 +74,9 @@ public final class SteamFluidHelper {
 
         dimensionCache.put(key, new CachedCheck(now, found));
         String logKey = dimension + "|" + key;
+        if (!found && !hasFluidHandlerNear(level, key) && LOGGED_NO_HANDLER.add(logKey)) {
+            LOGGER.info("У трубы {} не найден FluidHandler в самой трубе или соседних блоках. Create fluid-network traversal пока не реализован; проверьте FluidHandler capability у резервуара и точный ID жидкости.", key);
+        }
         if (found && (previous == null || !previous.containsSteam()) && LOGGED_STEAM_LINES.add(logKey)) {
             LOGGER.info("Труба найдена, пар есть: pos={}, dimension={}", key, dimension);
         } else {
@@ -101,9 +106,29 @@ public final class SteamFluidHelper {
             }
 
             boolean steam = isSteam(fluidId, BridgeConfig.STEAM_FLUID_IDS.get());
-            LOGGER.debug("FluidHandler at {}: fluid={}, amount={}, acceptedAsSteam={}",
-                pos, fluidId, stack.getAmount(), steam);
+            String fluidLogKey = fluidId.toString();
+            if (LOGGED_FLUID_TYPES.add(fluidLogKey)) {
+                LOGGER.info("FluidHandler увидел жидкость: id={}, amount={}, распознана как Going Nuclear steam={}",
+                    fluidId, stack.getAmount(), steam);
+            } else {
+                LOGGER.debug("FluidHandler at {}: fluid={}, amount={}, acceptedAsSteam={}",
+                    pos, fluidId, stack.getAmount(), steam);
+            }
             if (steam) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasFluidHandlerNear(ServerLevel level, BlockPos pipePos) {
+        if (level.getCapability(Capabilities.FluidHandler.BLOCK, pipePos, null) != null) {
+            return true;
+        }
+        for (Direction direction : Direction.values()) {
+            BlockPos adjacent = pipePos.relative(direction);
+            if (level.isLoaded(adjacent)
+                && level.getCapability(Capabilities.FluidHandler.BLOCK, adjacent, direction.getOpposite()) != null) {
                 return true;
             }
         }
@@ -259,5 +284,6 @@ public final class SteamFluidHelper {
         CACHE.remove(dimension);
         String prefix = dimension + "|";
         LOGGED_STEAM_LINES.removeIf(key -> key.startsWith(prefix));
+        LOGGED_NO_HANDLER.removeIf(key -> key.startsWith(prefix));
     }
 }
