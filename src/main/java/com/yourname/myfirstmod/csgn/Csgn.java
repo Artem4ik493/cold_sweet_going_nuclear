@@ -3,6 +3,7 @@ package com.yourname.myfirstmod.csgn;
 import com.mojang.logging.LogUtils;
 import com.yourname.myfirstmod.csgn.bridge.BridgeConfig;
 import com.yourname.myfirstmod.csgn.bridge.PositionCache;
+import com.yourname.myfirstmod.csgn.bridge.HeatTickHandler;
 import com.yourname.myfirstmod.csgn.bridge.ReactorHandler;
 import com.yourname.myfirstmod.csgn.bridge.PipeHeatHandler;
 import net.minecraft.client.Minecraft;
@@ -91,8 +92,7 @@ public class Csgn {
         // Bridge world events are registered explicitly on the gameplay event bus.
         NeoForge.EVENT_BUS.addListener(PositionCache::onBlockPlace);
         NeoForge.EVENT_BUS.addListener(PositionCache::onBlockBreak);
-        NeoForge.EVENT_BUS.addListener(ReactorHandler::onServerTick);
-        NeoForge.EVENT_BUS.addListener(PipeHeatHandler::onServerTick);
+        NeoForge.EVENT_BUS.addListener(HeatTickHandler::onLevelTick);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
