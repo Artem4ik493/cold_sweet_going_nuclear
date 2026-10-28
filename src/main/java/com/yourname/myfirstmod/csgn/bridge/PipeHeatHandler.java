@@ -21,6 +21,10 @@ public final class PipeHeatHandler {
 
     private PipeHeatHandler() {}
 
+    public static void resetDiagnostics() {
+        LOGGED_HOT_PIPES.clear();
+    }
+
     public static double heatForPlayer(ServerLevel level, ServerPlayer player) {
         double radius = BridgeConfig.PIPE_RADIUS.get();
         double radiusSquared = radius * radius;
