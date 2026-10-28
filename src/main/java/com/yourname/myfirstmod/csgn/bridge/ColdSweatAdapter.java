@@ -120,11 +120,25 @@ public final class ColdSweatAdapter {
 
     private static Method findMethod(Class<?> owner, String name, int parameterCount) {
         for (Method method : owner.getMethods()) {
-            if (method.getName().equals(name)
-                && method.getParameterCount() == parameterCount
-                && java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
-                return method;
+            if (!method.getName().equals(name)
+                || method.getParameterCount() != parameterCount
+                || !java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
+                continue;
             }
+
+            Class<?>[] parameters = method.getParameterTypes();
+            if (!LivingEntity.class.isAssignableFrom(parameters[0])) {
+                continue;
+            }
+            if (!parameters[1].isEnum()) {
+                continue;
+            }
+            if (parameterCount == 3
+                && parameters[2] != double.class
+                && parameters[2] != Double.class) {
+                continue;
+            }
+            return method;
         }
         return null;
     }
