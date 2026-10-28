@@ -99,5 +99,8 @@ public final class BridgeConfig {
             ENABLE_CONDENSATION.get());
         LOGGER.info("Bridge config IDs: reactors={}, pipes={}, steam fluids={}, condensation outlets={}",
             REACTOR_BLOCK_IDS.get(), PIPE_BLOCK_IDS.get(), STEAM_FLUID_IDS.get(), CONDENSATION_OUTPUT_BLOCK_IDS.get());
+        if (ENABLE_CONDENSATION.get() && CONDENSATION_OUTPUT_BLOCK_IDS.get().isEmpty()) {
+            LOGGER.warn("Конденсация включена, но condensationOutputBlockIds пуст. Укажите проверенный registry ID выходного блока; автоматический drain не будет происходить.");
+        }
     }
 }
