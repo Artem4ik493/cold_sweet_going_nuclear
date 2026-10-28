@@ -42,13 +42,13 @@ public final class BridgeConfig {
             .defineInRange("pipeRadius", 8.0, 1.0, 32.0);
         REACTOR_HEAT_MULTIPLIER = BUILDER.comment(
                 "Peak contribution from one reactor, in Cold Sweat Minecraft temperature units. 1.0 is a strong effect; 1 MC unit is about 23.3 C.")
-            .defineInRange("reactorHeatMultiplier", 1.5, 0.0, 10.0);
+            .defineInRange("reactorHeatMultiplier", 4.0, 0.0, 10.0);
         STEAM_HEAT_MULTIPLIER = BUILDER.comment(
                 "Peak contribution from one detected steam pipe, in Cold Sweat Minecraft temperature units.")
-            .defineInRange("steamHeatMultiplier", 0.75, 0.0, 10.0);
+            .defineInRange("steamHeatMultiplier", 1.5, 0.0, 10.0);
         MAX_TOTAL_HEAT = BUILDER.comment(
                 "Hard cap for the combined reactor and steam contribution, in Cold Sweat Minecraft temperature units.")
-            .defineInRange("maxTotalHeat", 5.0, 0.0, 20.0);
+            .defineInRange("maxTotalHeat", 10.0, 0.0, 20.0);
         UPDATE_INTERVAL = BUILDER.comment(
                 "Interval in ticks for block discovery and fluid-capability refresh. Temperature contribution is recalculated every level tick.")
             .defineInRange("updateInterval", 20, 1, 1200);
