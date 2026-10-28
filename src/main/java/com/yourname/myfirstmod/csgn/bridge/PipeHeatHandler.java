@@ -3,9 +3,6 @@ package com.yourname.myfirstmod.csgn.bridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +12,6 @@ import java.util.List;
  * from independently adding to the player's temperature.
  */
 public final class PipeHeatHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger("CSGN/SteamPipeHeatHandler");
-
     private PipeHeatHandler() {}
 
     public static double heatForPlayer(ServerLevel level, ServerPlayer player) {
@@ -35,13 +30,13 @@ public final class PipeHeatHandler {
                 continue;
             }
 
-            if (!SteamFluidHelper.containsConfiguredSteam(level, pipe)) {
-                continue;
-            }
-
             double distanceSquared = player.distanceToSqr(
                 pipe.getX() + 0.5, pipe.getY() + 0.5, pipe.getZ() + 0.5);
             if (distanceSquared > radiusSquared) {
+                continue;
+            }
+
+            if (!SteamFluidHelper.containsConfiguredSteam(level, pipe)) {
                 continue;
             }
 
