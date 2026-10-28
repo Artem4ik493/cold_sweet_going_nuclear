@@ -191,7 +191,11 @@ public final class SteamFluidHelper {
         // installed Going Nuclear source. Until then, the configured output is above
         // the marked block, and condensation remains disabled unless explicitly enabled.
         BlockPos waterPos = outputPos.above();
-        if (!level.isLoaded(waterPos) || !level.getBlockState(waterPos).canBeReplaced()) {
+        if (!level.isLoaded(waterPos)
+            || !level.getBlockState(waterPos).canBeReplaced()
+            || !level.getFluidState(waterPos).isEmpty()) {
+            // Do not replace existing water/other fluid and do not drain repeatedly into
+            // a cell that already contains a fluid source or flowing fluid.
             return false;
         }
 
