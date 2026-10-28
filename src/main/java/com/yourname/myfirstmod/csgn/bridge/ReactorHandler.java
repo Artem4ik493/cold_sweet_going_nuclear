@@ -2,6 +2,7 @@ package com.yourname.myfirstmod.csgn.bridge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public final class ReactorHandler {
     private ReactorHandler() {}
 
     public static void onServerTick(ServerTickEvent.Post event) {
-        if (!(event.getServer() != null)) {
+        if (event.getServer() == null) {
             return;
         }
 
@@ -32,34 +33,31 @@ public final class ReactorHandler {
                     continue;
                 }
 
-                // TODO: Artem's Task
-                // Replace this hook with the verified Going Nuclear reactor API/state.
-                applyHeatInRadius(level, reactor, BridgeConfig.REACTOR_RADIUS.get(),
+                // TODO: Artem's Task — read the active/hot state from the verified Going Nuclear API.
+                applyHeatToNearbyPlayers(level, reactor, BridgeConfig.REACTOR_RADIUS.get(),
                     BridgeConfig.REACTOR_HEAT_MULTIPLIER.get());
             }
             PositionCache.reactors(level).removeAll(stale);
         }
     }
 
-    private static void applyHeatInRadius(ServerLevel level, BlockPos source, double radius, double strength) {
-        int r = (int) Math.ceil(radius);
+    /**
+     * Processes players rather than iterating every block in a large radius.
+     * This avoids millions of block checks for a 100-block reactor radius.
+     */
+    private static void applyHeatToNearbyPlayers(
+        ServerLevel level, BlockPos source, double radius, double strength
+    ) {
         double radiusSquared = radius * radius;
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        double centerX = source.getX() + 0.5;
+        double centerY = source.getY() + 0.5;
+        double centerZ = source.getZ() + 0.5;
 
-        for (int x = -r; x <= r; x++) {
-            for (int y = -r; y <= r; y++) {
-                for (int z = -r; z <= r; z++) {
-                    if ((double) x * x + (double) y * y + (double) z * z > radiusSquared) {
-                        continue;
-                    }
-
-                    cursor.set(source.getX() + x, source.getY() + y, source.getZ() + z);
-                    if (!level.isLoaded(cursor)) {
-                        continue;
-                    }
-                    ColdSweatAdapter.applyHeat(level, source, cursor.immutable(), strength);
-                }
+        for (ServerPlayer player : level.players()) {
+            if (player.distanceToSqr(centerX, centerY, centerZ) > radiusSquared) {
+                continue;
             }
+            ColdSweatAdapter.applyHeat(level, source, player.blockPosition(), strength);
         }
     }
 }
