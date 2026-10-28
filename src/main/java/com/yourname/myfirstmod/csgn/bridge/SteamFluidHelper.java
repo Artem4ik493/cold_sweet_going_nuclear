@@ -72,6 +72,10 @@ public final class SteamFluidHelper {
             }
         }
 
+        if (!found) {
+            found = inspectConnectedCreateNetwork(level, key);
+        }
+
         dimensionCache.put(key, new CachedCheck(now, found));
         String logKey = dimension + "|" + key;
         if (!found && !hasFluidHandlerNear(level, key) && LOGGED_NO_HANDLER.add(logKey)) {
@@ -118,6 +122,16 @@ public final class SteamFluidHelper {
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * TODO: Artem's Task - Implement traversal of the real Create Fluid Network after
+     * verifying the exact Create version and public API in that version's source/JAR.
+     * The safe default is false: do not invent Create class names or guess at network
+     * internals. The direct block and adjacent FluidHandler checks above remain active.
+     */
+    private static boolean inspectConnectedCreateNetwork(ServerLevel level, BlockPos pipePos) {
         return false;
     }
 
