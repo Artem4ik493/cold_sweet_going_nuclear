@@ -75,8 +75,9 @@ public final class PositionCache {
         }
         String namespace = id.getNamespace().toLowerCase(java.util.Locale.ROOT);
         String path = id.getPath().toLowerCase(java.util.Locale.ROOT);
-        return namespace.contains("goingnuclear")
-            && (path.contains("reactor") || path.contains("rbmk") || path.contains("core"));
+        return (namespace.contains("goingnuclear")
+                && (path.contains("reactor") || path.contains("rbmk") || path.contains("core")))
+            || (namespace.equals("csgn") && path.equals("reactor_core"));
     }
 
     private static boolean isPipeCandidate(ResourceLocation id, BlockState state) {
