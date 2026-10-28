@@ -1,6 +1,5 @@
 package com.yourname.myfirstmod.csgn.bridge;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
