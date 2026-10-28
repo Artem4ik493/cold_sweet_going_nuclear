@@ -4,8 +4,6 @@ import com.mojang.logging.LogUtils;
 import com.yourname.myfirstmod.csgn.bridge.BridgeConfig;
 import com.yourname.myfirstmod.csgn.bridge.PositionCache;
 import com.yourname.myfirstmod.csgn.bridge.HeatTickHandler;
-import com.yourname.myfirstmod.csgn.bridge.ReactorHandler;
-import com.yourname.myfirstmod.csgn.bridge.PipeHeatHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
