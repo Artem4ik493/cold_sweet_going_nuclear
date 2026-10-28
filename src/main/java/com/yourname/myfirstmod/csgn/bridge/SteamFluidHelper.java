@@ -30,7 +30,6 @@ public final class SteamFluidHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger("CSGN/SteamFluidHelper");
     private static final Map<ResourceLocation, Map<BlockPos, CachedCheck>> CACHE = new ConcurrentHashMap<>();
     private static final Set<String> LOGGED_STEAM_LINES = ConcurrentHashMap.newKeySet();
-    private static final int WATER_SOURCE_MB = 1000;
 
     private record CachedCheck(long tick, boolean containsSteam) {}
     private record SteamSource(BlockPos pos, Direction side, IFluidHandler handler, FluidStack stack) {}
@@ -177,11 +176,13 @@ public final class SteamFluidHelper {
             return false;
         }
 
-        int amount = WATER_SOURCE_MB;
+        int amount = BridgeConfig.CONDENSATION_AMOUNT.get();
         FluidStack request = new FluidStack(source.stack().getFluid(), amount);
         FluidStack simulated = source.handler().drain(request, IFluidHandler.FluidAction.SIMULATE);
-        if (simulated.getAmount() < amount || !isSteam(BuiltInRegistries.FLUID.getKey(simulated.getFluid()),
-            BridgeConfig.STEAM_FLUID_IDS.get())) {
+        ResourceLocation simulatedFluidId = simulated.isEmpty()
+            ? null : BuiltInRegistries.FLUID.getKey(simulated.getFluid());
+        if (simulated.getAmount() < amount || simulatedFluidId == null
+            || !isSteam(simulatedFluidId, BridgeConfig.STEAM_FLUID_IDS.get())) {
             LOGGER.debug("Condensation skipped at {}: simulated drain was only {} mB", outputPos, simulated.getAmount());
             return false;
         }
@@ -237,7 +238,7 @@ public final class SteamFluidHelper {
 
         for (int tank = 0; tank < handler.getTanks(); tank++) {
             FluidStack stack = handler.getFluidInTank(tank);
-            if (stack.getAmount() >= WATER_SOURCE_MB) {
+            if (stack.getAmount() >= BridgeConfig.CONDENSATION_AMOUNT.get()) {
                 ResourceLocation id = BuiltInRegistries.FLUID.getKey(stack.getFluid());
                 if (id != null && isSteam(id, BridgeConfig.STEAM_FLUID_IDS.get())) {
                     return new SteamSource(pos.immutable(), side, handler, stack.copy());
