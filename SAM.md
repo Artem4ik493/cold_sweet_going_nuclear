@@ -368,3 +368,10 @@ NeoForge.EVENT_BUS.addListener(HeatTickHandler::onLevelTick);
 3. Если сборка прошла, проверь поведение в Minecraft.
 4. Запиши причину и результат в `fixes.md`.
 5. Если появился новый важный урок по Java или API, добавь его в `SAM.md`.
+
+
+### Дополнение: предупреждение про `EventBusSubscriber.bus()`
+
+В NeoForge 1.21.1 параметр `bus = EventBusSubscriber.Bus.MOD` устарел и помечен для удаления. В `Csgn.ClientModEvents` он убран, чтобы компилятор не показывал предупреждение. Тип события `FMLClientSetupEvent` позволяет NeoForge выбрать mod event bus автоматически. Для обработчика игрового `LevelTickEvent.Post` по-прежнему используется явная подписка на `NeoForge.EVENT_BUS`.
+
+**О конфигурации:** изменение `defineInRange(...)` задаёт новые значения по умолчанию для новых/сброшенных настроек, но уже созданный TOML-файл может сохранять старые параметры. После обновления сверь его с `BridgeConfig.java`, особенно радиус и множители нагрева.
