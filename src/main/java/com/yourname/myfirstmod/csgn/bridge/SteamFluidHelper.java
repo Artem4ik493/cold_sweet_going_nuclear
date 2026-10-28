@@ -291,6 +291,14 @@ public final class SteamFluidHelper {
         return null;
     }
 
+    /** Clear cached steam results after the live config is reloaded. */
+    public static void clearCache() {
+        CACHE.clear();
+        LOGGED_STEAM_LINES.clear();
+        LOGGED_FLUID_TYPES.clear();
+        LOGGED_NO_HANDLER.clear();
+    }
+
     public static void invalidate(ServerLevel level, BlockPos pos) {
         Map<BlockPos, CachedCheck> dimensionCache = CACHE.get(level.dimension().location());
         if (dimensionCache != null) {
