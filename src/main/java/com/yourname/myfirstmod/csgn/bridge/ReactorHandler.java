@@ -21,6 +21,10 @@ public final class ReactorHandler {
 
     private ReactorHandler() {}
 
+    public static void resetDiagnostics() {
+        LOGGED_REACTORS.clear();
+    }
+
     public static double heatForPlayer(ServerLevel level, ServerPlayer player) {
         double radius = BridgeConfig.REACTOR_RADIUS.get();
         double radiusSquared = radius * radius;
