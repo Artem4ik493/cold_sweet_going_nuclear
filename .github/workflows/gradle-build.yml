@@ -18,14 +18,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+      # This repository does not commit gradlew/gradlew.bat or wrapper JARs.
+      # Provision Gradle directly instead of calling a missing wrapper.
+      - name: Set up Gradle 8.14
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
 
       - name: Compile mod sources
-        run: ./gradlew --no-daemon compileJava
+        run: gradle --no-daemon compileJava
